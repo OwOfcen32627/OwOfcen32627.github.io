@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔐 Final Verification</title>
+    <title>Final Verification</title>
     <style>
         * {
             margin: 0;
@@ -151,17 +151,17 @@
         <input type="text" id="passwordInput" placeholder="Enter final password" maxlength="30" autocomplete="off">
         <br>
         <button id="submitBtn">Verify</button>
-        <div class="error-message" id="errorMsg">❌ Incorrect password, please try again</div>
+        <div class="error-message" id="errorMsg">Wrong Answer</div>
     </div>
 
     <!-- Success Modal -->
     <div class="modal-overlay" id="successModal">
         <div class="modal-dialog">
-            <h2>🔓 Access Granted</h2>
+            <h2>Accepted.</h2>
             <p id="successMessage">
-                Congratulations! You have solved the final puzzle.<br>
-                Project Codename: <strong style="color:#d93025;">PHOENIX</strong><br>
-                Experimental data unlocked.
+                你解出来了喵<br>
+                你太牛逼了喵
+                跪了喵
             </p>
             <button onclick="document.getElementById('successModal').classList.remove('active')">Close</button>
         </div>
@@ -169,7 +169,7 @@
 
     <script>
         // ========== SET YOUR FINAL PASSWORD HERE ==========
-        const FINAL_PASSWORD = "PHOENIX";
+        const FINAL_PASSWORD = "1145141919810****WORUONB***GUNMUGUNMU";
 
         const passwordInput = document.getElementById('passwordInput');
         const submitBtn = document.getElementById('submitBtn');
