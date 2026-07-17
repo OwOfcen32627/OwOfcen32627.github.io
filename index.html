@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>麒麟中学论坛</title>
+    <style>
+        :root {
+            --bg: #f0f2f5;
+            --card: #ffffff;
+            --primary: #2c6fce;
+            --primary-dark: #1a529e;
+            --text: #2c2c2c;
+            --text-light: #666;
+            --text-lighter: #999;
+            --border: #e2e6ea;
+            --accent: #e8f0fe;
+            --tag-bg: #fef3e1;
+            --tag-text: #b8780a;
+            --danger: #d93025;
+            --success: #1e8e3e;
+            --warning: #f9ab00;
+            --radius: 8px;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --font-sans: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            font-family: var(--font-sans);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(44, 111, 206, 0.03) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 60%, rgba(44, 111, 206, 0.02) 0%, transparent 60%);
+        }
+
+        .top-bar {
+            background: var(--primary-dark);
+            color: #fff;
+            font-size: 13px;
+            padding: 6px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            letter-spacing: 0.3px;
+        }
+        .top-bar a {
+            color: #c8ddfa;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.2s;
+        }
+        .top-bar a:hover {
+            color: #fff;
+        }
+        .top-bar .left-links span {
+            opacity: 0.7;
+            margin: 0 6px;
+        }
+        .top-bar .right-info {
+            font-size: 12px;
+            opacity: 0.85;
+        }
+
+        .header {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+            transition: opacity 0.2s;
+        }
+        .logo-area:hover {
+            opacity: 0.8;
+        }
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #4a90d9, #2c6fce);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #fff;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .logo-text h1 {
+            font-size: 20px;
+            color: var(--primary-dark);
+            font-weight: 700;
+            letter-spacing: 1px;
+            line-height: 1.2;
+        }
+        .logo-text .subtitle {
+            font-size: 11px;
+            color: var(--text-lighter);
+            letter-spacing: 2px;
+        }
+        .header-nav {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-left: auto;
+        }
+        .header-nav a {
+            padding: 8px 14px;
+            text-decoration: none;
+            color: var(--text);
+            font-size: 14px;
+            border-radius: 20px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .header-nav a:hover,
+        .header-nav a.active {
+            background: var(--accent);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: #f5f6f8;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px 14px;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        .search-box:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(44, 111, 206, 0.1);
+        }
+        .search-box input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 13px;
+            width: 140px;
+            color: var(--text);
+        }
+        .search-box .search-icon {
+            color: var(--text-lighter);
+            font-size: 15px;
+        }
+
+        .main-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .content-area {
+            flex: 1;
+            min-width: 0;
+        }
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: sticky;
+            top: 100px;
+        }
+
+        .announcement-bar {
+            background: var(--accent);
+            border: 1px solid #c8ddfa;
+            border-radius: var(--radius);
+            padding: 10px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--primary-dark);
+            overflow: hidden;
+            position: relative;
+        }
+        .announcement-bar .ann-icon {
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+        .announcement-bar .marquee {
+            white-space: nowrap;
+            animation: marquee 18s linear infinite;
+        }
+        @keyframes marquee {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-180%);
+            }
+        }
+        .announcement-bar .marquee:hover {
+            animation-play-state: paused;
+        }
+
+        .post-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid transparent;
+            transition: all 0.25s;
+            cursor: default;
+            position: relative;
+        }
+        .post-card:hover {
+            box-shadow: var(--shadow-hover);
+            border-color: #d0d7e2;
+        }
+        .post-card.pinned {
+            border-left: 4px solid var(--warning);
+            background: #fffef9;
+        }
+        .post-card.pinned::before {
+            content: '置顶';
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 11px;
+            color: var(--tag-text);
+            background: var(--tag-bg);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: var(--text-lighter);
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        .post-meta .user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #fff;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .post-meta .username {
+            font-weight: 600;
+            color: var(--primary-dark);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .post-meta .username:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+        .post-meta .user-badge {
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        .badge-admin {
+            background: #fce8e6;
+            color: #c5221f;
+        }
+        .badge-mod {
+            background: #e8f0fe;
+            color: #1a529e;
+        }
+        .badge-veteran {
+            background: #fef3e1;
+            color: #b8780a;
+        }
+        .post-meta .post-time {
+            opacity: 0.7;
+        }
+        .post-meta .tag {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: #f0f2f5;
+            color: #666;
+        }
+        .post-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: color 0.2s;
+            line-height: 1.4;
+        }
+        .post-title:hover {
+            color: var(--primary);
+        }
+        .post-excerpt {
+            font-size: 14px;
+            color: #444;
+            line-height: 1.7;
+            margin-bottom: 6px;
+        }
+        .post-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--text-lighter);
+            margin-top: 8px;
+        }
+        .post-stats span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        /* 隐藏墨水样式（用于需要选中才能看到的文字） */
+        .hidden-ink {
+            color: #f9fafb;
+            background: #f9fafb;
+            transition: color 0.3s, background 0.3s;
+            cursor: text;
+            user-select: text;
+            border-radius: 2px;
+            padding: 0 2px;
+        }
+        .post-card:hover .hidden-ink {
+            color: #e8e8e8;
+            background: #fcfcfc;
+        }
+        .clue-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: #d93025;
+            border-radius: 50%;
+            margin: 0 3px;
+            vertical-align: middle;
+            animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 0.4;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .sidebar-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+        }
+        .sidebar-card h3 {
+            font-size: 14px;
+            color: var(--text);
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent);
+            letter-spacing: 0.5px;
+        }
+        .sidebar-card .user-list {
+            list-style: none;
+            font-size: 13px;
+        }
+        .sidebar-card .user-list li {
+            padding: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #555;
+            cursor: default;
+        }
+        .sidebar-card .user-list li .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .dot-online {
+            background: #1e8e3e;
+        }
+        .dot-away {
+            background: #f9ab00;
+        }
+        .dot-offline {
+            background: #ccc;
+        }
+        .sidebar-card .stat-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 4px 0;
+            color: #555;
+        }
+        .sidebar-card .stat-value {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        .secret-entry {
+            font-size: 9px;
+            color: #e8e8e8;
+            text-align: center;
+            cursor: default;
+            user-select: none;
+            transition: color 0.3s;
+            letter-spacing: 1px;
+            margin-top: 6px;
+        }
+        .secret-entry:hover {
+            color: #bbb;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .modal-dialog {
+            background: #fff;
+            border-radius: 14px;
+            padding: 28px 24px;
+            width: 90%;
+            max-width: 420px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: slideUp 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal-dialog h2 {
+            font-size: 20px;
+            margin-bottom: 6px;
+            color: var(--text);
+            letter-spacing: 1px;
+        }
+        .modal-dialog .modal-subtitle {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 16px;
+            letter-spacing: 2px;
+        }
+        .modal-dialog input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 15px;
+            text-align: center;
+            letter-spacing: 3px;
+            outline: none;
+            transition: all 0.3s;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        .modal-dialog input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(44, 111, 206, 0.08);
+        }
+        .modal-dialog .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            justify-content: center;
+        }
+        .modal-dialog button {
+            padding: 10px 24px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+        }
+        .btn-submit {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-submit:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(44, 111, 206, 0.35);
+        }
+        .btn-cancel {
+            background: #f0f2f5;
+            color: #666;
+        }
+        .btn-cancel:hover {
+            background: #e2e6ea;
+        }
+        .modal-dialog .hint-text {
+            font-size: 11px;
+            color: #bbb;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+        .modal-result {
+            display: none;
+            margin-top: 14px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            line-height: 1.6;
+        }
+        .modal-result.success {
+            display: block;
+            background: #e6f4ea;
+            color: #1e7e34;
+            border: 1px solid #b7dfc5;
+        }
+        .modal-result.error {
+            display: block;
+            background: #fce8e6;
+            color: #c5221f;
+            border: 1px solid #f5c6c2;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 11px;
+            color: #bbb;
+            letter-spacing: 0.5px;
+            border-top: 1px solid var(--border);
+            margin-top: 30px;
+        }
+        .footer .footer-year {
+            font-weight: 700;
+            color: #aaa;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                padding: 10px;
+                gap: 12px;
+            }
+            .sidebar {
+                width: 100%;
+                position: static;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .sidebar-card {
+                flex: 1;
+                min-width: 140px;
+            }
+            .header {
+                padding: 10px 14px;
+                gap: 10px;
+            }
+            .header-nav a {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            .search-box input {
+                width: 90px;
+            }
+            .post-card {
+                padding: 14px;
+            }
+            .post-title {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部信息栏 -->
+    <div class="top-bar">  
+        <div class="left-links">
+            <a href="#"></a>麒麟中学论坛</a><span>|</span>
+        </div>
+        <div class="right-info">
+            今日: <strong>0</strong> 帖 | 昨日: <strong>0</strong> 帖 | 在线: <strong>0</strong> 人
+        </div> </div>
+
+    <!-- 头部导航 -->
+    <header class="header">
+        <div class="logo-area" id="logoTrigger">
+            
+            <div class="logo-text">
+                <h1>麒麟中学学生论坛</h1>
+                <div class="subtitle">— QiLin Experimental Middle School —</div>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html" class="active">论坛首页</a>
+            <a href="#">灌水区</a>
+            <a href="#">学习交流</a>
+            <a href="#">休闲娱乐</a>
+            <a href="#">求助问答</a>
+        </nav>
+        <div class="search-box"> ... </div>
+    </header>
+
+    <div class="main-container">
+        <div class="content-area">
+            <!-- 跑马灯公告 -->
+            <div class="announcement-bar">
+                 <span class="ann-icon">📢</span>
+                <span class="marquee">
+                    <!-- 跑马灯内容：可编辑公告 -->
+                    本论坛已迁移至腾讯云以便访问，此处迁移仅供纪念 
+                </span> </div>
+
+            <!-- ===== 帖子1（置顶） ===== -->
+            <div class="post-card pinned">
+                <div class="post-meta"> ... </div>
+                <div class="post-title">
+                    <a href="post1.html" style="text-decoration:none;color:inherit;">测试 & 站规贴</a>
+                </div>
+                <div class="post-excerpt">麒麟论坛站规</div>
+                <div class="post-stats"> ... </div>
+            </div>
+
+            <!-- ===== 帖子2 ===== -->
+            <div class="post-card">
+                <div class="post-meta"> ... </div>
+                <div class="post-title">
+                    <a href="post2.html" style="text-decoration:none;color:inherit;">【求助】帖子2标题</a>
+                </div>
+                <div class="post-excerpt">帖子2的摘要...</div>
+                <div class="post-stats"> ... </div>
+            </div>
+
+            <!-- ===== 帖子3 ===== -->
+            <div class="post-card">
+                <div class="post-meta"> ... </div>
+                <div class="post-title">
+                    <a href="post3.html" style="text-decoration:none;color:inherit;">【分享】帖子3标题</a>
+                </div>
+                <div class="post-excerpt">帖子3的摘要...</div>
+                <div class="post-stats"> ... </div>
+            </div>
+
+            <!-- ===== 帖子4 ===== -->
+            <div class="post-card">
+                <div class="post-meta"> ... </div>
+                <div class="post-title">
+                    <a href="post4.html" style="text-decoration:none;color:inherit;">【灌水】帖子4标题</a>
+                </div>
+                <div class="post-excerpt">帖子4的摘要...</div>
+                <div class="post-stats"> ... </div>
+            </div>
+
+            <!-- ===== 帖子5 ===== -->
+            <div class="post-card">
+                <div class="post-meta"> ... </div>
+                <div class="post-title">
+                    <a href="post5.html" style="text-decoration:none;color:inherit;">【询问】帖子5标题</a>
+                </div>
+                <div class="post-excerpt">帖子5的摘要...</div>
+                <div class="post-stats"> ... </div>
+            </div>
+
+            <!-- ===== 帖子6（官方公告） ===== -->
+            <div class="post-card" style="border-left:3px solid #c5221f;">
+                <div class="post-meta"> ... </div>
+                <div class="post-title">
+                    <a href="post6.html" style="text-decoration:none;color:inherit;">🔴【公告】帖子6标题</a>
+                </div>
+                <div class="post-excerpt">帖子6的摘要...</div>
+                <div class="post-stats"> ... </div>
+            </div>
+
+            <!-- 分页占位 -->
+            <div style="text-align:center;padding:16px;"> ... </div>
+        </div>
+
+        <!-- 侧边栏（与之前完全一致） -->
+        <aside class="sidebar">
+            <div class="sidebar-card"> ... 在线用户 ... </div>
+            <div class="sidebar-card"> ... 论坛统计 ... </div>
+            <div class="sidebar-card">
+                <p style="font-size:11px;">—— 🔐 ——</p>
+                <div class="secret-entry" id="secretEntry">[ 管理员认证入口 · 需要密码 ]</div>
+            </div>
+        </aside>
+    </div>
+
+    <div class="footer">
+        <p>© <span class="footer-year">2019-2024</span> 麒麟中学学生论坛 | Powered by GunMuBBS(? v1.0</p>
+        <p style="font-size:10px;opacity:0.6;">本站由学生自主管理，与学校官方无关(至少现在是)</p>
+        <p style="font-size:1px;opacity:0.35;letter-spacing:4px;margin-top:4px;">
+            
+            LOOK_CLOSER
+        </p>
+    </div>
+
+    <!-- 密码弹窗 -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-dialog">
+            <h2>学生认证（由于github只支持静态网页，原来的学号认证无法使用，看看就好）</h2>
+            <div class="modal-subtitle">— 请输入学号（20********） —</div>
+            <input type="text" id="passwordInput" placeholder="······" maxlength="20" autocomplete="off">
+            <div class="btn-row">
+                <button class="btn-submit" id="btnSubmit">验证</button>
+                <button class="btn-cancel" id="btnCancel">取消</button>
+            </div>
+            <div class="hint-text">（由于github只支持静态网页，原来的学号认证无法使用，看看就好）</div>
+            <div class="modal-result" id="modalResult"></div>
+        </div>
+    </div>
+
+    <!-- 成功后的真相弹窗 -->
+    <div class="modal-overlay" id="truthOverlay">
+        <div class="modal-dialog" style="max-width:500px;text-align:left;">
+            <h2 style="text-align:center;">隐藏信息</h2>
+            <div class="modal-subtitle" style="text-align:center;">— 解密成功 —</div>
+            <div style="background:#1a1a1a;color:#e0e0e0;padding:18px;border-radius:8px;font-size:13px;line-height:1.8;font-family:'Courier New',monospace;margin:12px 0;text-align:left;">
+                开智了👍 这么聪明20块给你了
+
+            </div>
+            <button class="btn-cancel" onclick="document.getElementById('truthOverlay').classList.remove('active')" style="display:block;margin:10px auto 0;">关闭</button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ==================== 控制台隐藏信息（可修改） ====================
+            console.log('%c🔍 枫林一中学生论坛 %c| %c控制台', 'font-size:16px;font-weight:bold;color:#2c6fce;', '', 'color:#999;');
+            console.log('%c💡 提示：仔细查看页面源代码，控制台，以及隐藏的文字。', 'color:#f9ab00;font-size:12px;');
+            console.log('%c📝 各个帖子中可能藏有字母线索...', 'color:#1e8e3e;font-size:12px;');
+
+            // ==================== 密码验证逻辑 ====================
+            const CORRECT_PASSWORD = '2024431232'; // <--- 修改为你的最终密码
+            const modalOverlay = document.getElementById('modalOverlay');
+            const passwordInput = document.getElementById('passwordInput');
+            const btnSubmit = document.getElementById('btnSubmit');
+            const btnCancel = document.getElementById('btnCancel');
+            const modalResult = document.getElementById('modalResult');
+            const truthOverlay = document.getElementById('truthOverlay');
+            const secretEntry = document.getElementById('secretEntry');
+            const logoTrigger = document.getElementById('logoTrigger');
+
+            function openPasswordModal() {
+                modalOverlay.classList.add('active');
+                passwordInput.value = '';
+                modalResult.className = 'modal-result';
+                modalResult.textContent = '';
+                setTimeout(() => passwordInput.focus(), 200);
+            }
+
+            function closePasswordModal() {
+                modalOverlay.classList.remove('active');
+            }
+
+            function checkPassword() {
+                const input = passwordInput.value.trim().toUpperCase();
+                if (input === CORRECT_PASSWORD) {
+                    modalResult.className = 'modal-result success';
+                    modalResult.textContent = '✅ 认证成功！正在显示隐藏信息...';
+                    setTimeout(() => {
+                        closePasswordModal();
+                        setTimeout(() => {
+                            truthOverlay.classList.add('active');
+                        }, 400);
+                    }, 1200);
+                } else if (input.length === 0) {
+                    modalResult.className = 'modal-result error';
+                    modalResult.textContent = '请输入学号';
+                } else {
+                    modalResult.className = 'modal-result error';
+                    modalResult.textContent = '学号不符合规范';
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+            }
+
+            btnSubmit.addEventListener('click', checkPassword);
+            btnCancel.addEventListener('click', closePasswordModal);
+            modalOverlay.addEventListener('click', function(e) {
+                if (e.target === modalOverlay) closePasswordModal();
+            });
+            passwordInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') checkPassword();
+            });
+
+            secretEntry.addEventListener('click', openPasswordModal);
+            secretEntry.style.cursor = 'pointer';
+
+            let logoClickCount = 0;
+            let logoClickTimer = null;
+            logoTrigger.addEventListener('click', function() {
+                logoClickCount++;
+                if (logoClickTimer) clearTimeout(logoClickTimer);
+                if (logoClickCount >= 3) {
+                    logoClickCount = 0;
+                    openPasswordModal();
+                }
+                logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 1500);
+            });
+            logoTrigger.style.cursor = 'pointer';
+
+            // ==================== 隐藏墨水交互（保留） ====================
+            const hiddenInks = document.querySelectorAll('.hidden-ink');
+            hiddenInks.forEach(el => {
+                el.addEventListener('mouseenter', function() {
+                    this.style.color = '#d93025';
+                    this.style.background = '#fff3f3';
+                });
+                el.addEventListener('mouseleave', function() {
+                    this.style.color = '#f9fafb';
+                    this.style.background = '#f9fafb';
+                });
+            });
+
+            // ==================== 搜索框彩蛋（可自定义） ====================
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    const query = searchInput.value.trim().toUpperCase();
+                    // 你可以在这里添加更多搜索关键词触发的事件
+                    if (query === '2024431232') {
+                        openPasswordModal();
+                        searchInput.value = '';
+                    } else if (query === '沃若牛逼') {
+                        alert('注意');
+                        searchInput.value = '';
+                    }
+                }
+            });
+
+            console.log('%c✅ 模板已就绪，请编辑帖子内容与密码。', 'color:#1e8e3e;');
+        })();
+    </script>
+</body>
+</html>
