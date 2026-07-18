@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦕 Dino Runner</title>
+    <style>
+        body {
+            margin: 0; padding: 0; background: #1a1a2e; display: flex;
+            justify-content: center; align-items: center; height: 100vh;
+            flex-direction: column;
+            font-family: monospace;
+        }
+        canvas {
+            border: 2px solid #555;
+            background: #f7f7f7;
+            display: block;
+            box-shadow: 0 0 20px rgba(0,0,0,0.7);
+        }
+        #score {
+            color: #eee; font-size: 24px; margin-bottom: 10px;
+        }
+        .back-link {
+            color: #ccc; margin-top: 15px; font-size: 14px;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div id="score">Score: 0</div>
+    <canvas id="gameCanvas" width="800" height="300"></canvas>
+    <a href="index.html" class="back-link">← 返回主页</a>
+
+    <script>
+        (function() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            const scoreDisplay = document.getElementById('score');
+
+            // 游戏参数
+            const groundY = 260;
+            let dino = { x: 80, y: groundY - 40, width: 40, height: 40, vy: 0, grounded: true };
+            const gravity = 0.9;
+            const jumpPower = -14;
+
+            let obstacles = [];
+            let frameCount = 0;
+            let score = 0;
+            let gameSpeed = 6;
+            let gameOver = false;
+            let sstvTriggered = false;
+
+            // 音频元素 (隐藏)
+            const sstvAudio = new Audio('assets/sstv.wav');
+            sstvAudio.preload = 'auto';
+
+            function resetGame() {
+                dino.y = groundY - 40;
+                dino.vy = 0;
+                dino.grounded = true;
+                obstacles = [];
+                frameCount = 0;
+                score = 0;
+                gameSpeed = 6;
+                gameOver = false;
+                sstvTriggered = false;
+                scoreDisplay.textContent = 'Score: 0';
+            }
+
+            function jump() {
+                if (dino.grounded && !gameOver) {
+                    dino.vy = jumpPower;
+                    dino.grounded = false;
+                }
+            }
+
+            function update() {
+                if (gameOver) return;
+
+                // 恐龙物理
+                dino.vy += gravity;
+                dino.y += dino.vy;
+                if (dino.y >= groundY - dino.height) {
+                    dino.y = groundY - dino.height;
+                    dino.vy = 0;
+                    dino.grounded = true;
+                } else {
+                    dino.grounded = false;
+                }
+
+                // 障碍物生成
+                if (frameCount % 70 === 0) {
+                    let height = 30 + Math.random() * 30;
+                    obstacles.push({
+                        x: canvas.width,
+                        y: groundY - height,
+                        width: 20,
+                        height: height
+                    });
+                }
+
+                // 障碍物移动
+                for (let obs of obstacles) {
+                    obs.x -= gameSpeed;
+                }
+                obstacles = obstacles.filter(obs => obs.x + obs.width > 0);
+
+                // 碰撞检测
+                for (let obs of obstacles) {
+                    if (dino.x < obs.x + obs.width &&
+                        dino.x + dino.width > obs.x &&
+                        dino.y < obs.y + obs.height &&
+                        dino.y + dino.height > obs.y) {
+                        gameOver = true;
+                        break;
+                    }
+                }
+
+                // 分数增加
+                if (!gameOver) {
+                    score += 1;
+                    scoreDisplay.textContent = 'Score: ' + score;
+                    // 速度逐渐增加
+                    if (score % 200 === 0) gameSpeed += 0.3;
+                }
+
+                // ★ 彩蛋触发：分数达到32627
+                if (!sstvTriggered && score >= 32627) {
+                    sstvTriggered = true;
+                    triggerSSTV();
+                }
+
+                frameCount++;
+            }
+
+            function triggerSSTV() {
+                // 播放 SSTV 音频，并给出视觉提示
+                sstvAudio.play().catch(e => {
+                    console.error('音频播放失败，请检查 assets/sstv.wav 是否存在', e);
+                });
+                // 在画布上短暂显示提示
+                ctx.save();
+                ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#0f0';
+                ctx.font = 'bold 24px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('🔊 SSTV SIGNAL TRANSMITTING...', canvas.width/2, canvas.height/2);
+                ctx.restore();
+                setTimeout(() => { if (!gameOver) draw(); }, 3000);
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // 地面
+                ctx.beginPath();
+                ctx.moveTo(0, groundY);
+                ctx.lineTo(canvas.width, groundY);
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // 恐龙（简单矩形表示）
+                ctx.fillStyle = '#333';
+                ctx.fillRect(dino.x, dino.y, dino.width, dino.height);
+                // 眼睛
+                ctx.fillStyle = 'white';
+                ctx.fillRect(dino.x + 28, dino.y + 8, 8, 8);
+                ctx.fillStyle = 'black';
+                ctx.fillRect(dino.x + 32, dino.y + 12, 4, 4);
+
+                // 障碍物
+                ctx.fillStyle = '#c0392b';
+                for (let obs of obstacles) {
+                    ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                    // 仙人掌刺
+                    ctx.fillStyle = '#2ecc71';
+                    ctx.fillRect(obs.x - 3, obs.y + 5, 6, 4);
+                    ctx.fillRect(obs.x + obs.width - 3, obs.y + 15, 6, 4);
+                    ctx.fillStyle = '#c0392b';
+                }
+
+                if (gameOver) {
+                    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = 'white';
+                    ctx.font = '30px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('GAME OVER', canvas.width/2, canvas.height/2);
+                }
+            }
+
+            function gameLoop() {
+                update();
+                draw();
+                requestAnimationFrame(gameLoop);
+            }
+
+            // 键盘控制
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space' || e.code === 'ArrowUp') {
+                    e.preventDefault();
+                    if (gameOver) {
+                        resetGame();
+                    } else {
+                        jump();
+                    }
+                }
+            });
+
+            // 移动端触摸
+            canvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                if (gameOver) resetGame();
+                else jump();
+            });
+
+            resetGame();
+            gameLoop();
+        })();
+    </script>
+</body>
+</html>
