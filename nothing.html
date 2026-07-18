@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片测试页面</title>
+    <style>
+        body { background: #111; color: #aaa; font-family: monospace; padding: 1rem; }
+        .gallery { display: flex; flex-wrap: wrap; gap: 10px; }
+        .gallery img { width: 150px; height: 150px; object-fit: cover; border: 1px solid #333; }
+        h1 { color: #f39c12; }
+        .hint { color: #666; margin: 1rem 0; }
+    </style>
+</head>
+<body>
+    <h1>nothing</h1>
+    <p class="hint">图片</p>
+    <div class="gallery" id="imageContainer"></div>
+
+    <script>
+        
+        const container = document.getElementById('imageContainer');
+        for (let i = 0; i < 40; i++) {
+            const img = document.createElement('img');
+            img.src = `https://picsum.photos/150/150?random=${i}`;
+            img.alt = 'sample image';
+            container.appendChild(img);
+        }
+    </script>
+    
+</body>
+</html>
