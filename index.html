@@ -87,7 +87,6 @@
             transform: scale(0.97);
         }
 
-        /* 极简响应式 */
         @media (max-width: 480px) {
             .container {
                 padding: 28px 24px;
@@ -115,57 +114,49 @@
 
     <script>
         // ============================================================
-        //  🔐 密码配置（加密存储）
+        //  🔐 密码使用 ROT13 加密（可逆替换，仅作示例）
         // ------------------------------------------------------------
-        //  默认密码：hello
-        //  SHA-256：2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
-        //
-        //  📌 更换密码步骤：
-        //    1. 在浏览器控制台运行以下代码，计算新密码的 SHA-256：
-        //       await crypto.subtle.digest('SHA-256', new TextEncoder().encode('你的新密码'))
-        //         .then(b => Array.from(new Uint8Array(b)).map(v => v.toString(16).padStart(2,'0')).join(''))
-        //    2. 将下方 CORRECT_HASH 替换为计算出的哈希值
-        //    3. 请使用 8 位以上包含大小写字母+数字的强密码
+        //  明文密码：COGITOERGOSUM138902184
+        //  ROT13 密文：PBTVGBRETBFHZ138902184
+        //  验证时对密文解密后与用户输入比较
         // ============================================================
 
-        const CORRECT_HASH = '2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824';
+        const ENCRYPTED_PASSWORD = 'PBTVGBRETBFHZ138902184';
+
+        // ---------- ROT13 解密（同时支持大小写） ----------
+        function rot13(str) {
+            return str.replace(/[a-zA-Z]/g, function(c) {
+                const base = (c <= 'Z') ? 65 : 97;
+                return String.fromCharCode((c.charCodeAt(0) - base + 13) % 26 + base);
+            });
+        }
+
+        // 预先解密得到明文（仅在验证时使用，不暴露全局）
+        function getPlainPassword() {
+            return rot13(ENCRYPTED_PASSWORD);
+        }
 
         // DOM 引用
         const passwordInput = document.getElementById('passwordInput');
         const submitBtn = document.getElementById('submitBtn');
         const errorMsg = document.getElementById('errorMsg');
 
-        // ---------- 核心验证函数 ----------
-        async function verifyPassword(input) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(input);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            return hashHex === CORRECT_HASH;
-        }
-
         // ---------- 提交处理 ----------
-        async function handleSubmit() {
-            const password = passwordInput.value;
+        function handleSubmit() {
+            const input = passwordInput.value;
+            const plain = getPlainPassword();
 
-            // 空输入校验
-            if (!password) {
+            if (!input) {
                 errorMsg.textContent = '⛔ 请输入密码';
                 return;
             }
 
-            const isValid = await verifyPassword(password);
-
-            if (isValid) {
+            if (input === plain) {
                 errorMsg.textContent = '';
-                // ✅ 密码正确 → 弹窗
                 alert('✅ 密码正确！');
-                // 可选的：清空输入框，方便下次使用
                 passwordInput.value = '';
                 passwordInput.focus();
             } else {
-                // ❌ 密码错误
                 errorMsg.textContent = '❌ 密码错误，请重试';
                 passwordInput.value = '';
                 passwordInput.focus();
@@ -174,21 +165,18 @@
 
         // ---------- 事件绑定 ----------
         submitBtn.addEventListener('click', handleSubmit);
-
         passwordInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 handleSubmit();
             }
         });
-
-        
         passwordInput.addEventListener('focus', () => {
             errorMsg.textContent = '';
         });
 
-        // 控制台友好提示（不暴露密码）
-        console.log('🔐 密码已加密存储（SHA-256）');
+        // 控制台提示（不泄露密码）
+        console.log('🔐 密码已加密存储（ROT13）');
     </script>
 
 </body>
