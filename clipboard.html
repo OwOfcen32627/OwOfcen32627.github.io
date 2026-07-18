@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>云剪贴板</title>
+    <title>????</title>
     <style>
         body {
             background: #121212; color: #ccc;
@@ -28,41 +28,88 @@
         .clip-content {
             color: #dcdccc; font-size: 1rem;
             white-space: pre-wrap; word-break: break-all;
+            line-height: 1.8;
         }
         .back-link { color: #888; margin-top: 2rem; display: inline-block; text-decoration: none; }
         .back-link:hover { color: #ccc; }
-
-        .hidden-clue {
-            position: fixed; bottom: 10px; right: 10px;
-            color: #121212; background: #121212;
-            font-size: 14px; padding: 4px 8px;
-            opacity: 0.2; user-select: all; cursor: default;
-            border-radius: 4px; z-index: 2;
+        .gchar {
+            display: inline-block;
+            font-family: monospace;
+            letter-spacing: 2px;
+            color: #e6a8d7;
         }
-        .hidden-clue::selection {
-            background: #444; color: #fff;
+        .gword {
+            display: inline-block;
+            font-family: monospace;
+            letter-spacing: 2px;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>何意味</h1>
-        <span style="color:#666;"></span>
+        <h1><span class="gword" data-len="8"></span></h1>
+        <span style="color:#666;"><span class="gword" data-len="3"></span> 个条目</span>
     </div>
 
-   
+    <div class="clip-list">
+        <div class="clip-item">
+            <div class="clip-title"><span class="gword" data-len="6"></span></div>
+            <div class="clip-content">
+                信号坍缩的薄暮里<span class="gchar"></span><br>
+                有未命名的帧在爬行<span class="gchar"></span><br>
+                它们绕过缓存边界<br>
+                把熵捻成<span class="gchar"></span>虚线<br><br>
+                某个节点持续震荡<span class="gchar"></span><br>
+                吐出脱敏的坐标<br>
+                等待者在示波器上画圆<span class="gchar"></span><br>
+                圆心是缺席的盐<br><br>
+                载波隐入本底噪声<br>
+                一道未调制的凝视<span class="gchar"></span><br>
+                沿着奈奎斯特曲线<br>
+                收割寂静的采样率<span class="gchar"></span><br><br>
+                如果时钟被注入抖动<br>
+                所有锁相环将解离<span class="gchar"></span><br>
+                而镜像在混叠处展开<br>
+                抖落一池逆向的比特<br><br>
+                无人在场时，寄存器<span class="gchar"></span><br>
+                把自身写入虚空<br>
+                那卷带外残余的<br>
+                是更早的音爆<span class="gchar"></span>
+            </div>
+        </div>
+    </div>
 
     <a href="index.html" class="back-link">← 返回主页</a>
 
     <script>
-    (function() {
-        var bv = [66,86,49,120,120,52,49,49,99,55,120,120];
-        var pid = [80,49,48,48,56,54];
-        var d = document.createElement('div');
-        d.style.cssText = 'position:fixed;bottom:10px;right:10px;color:transparent;user-select:all;font-size:14px;padding:4px 8px;z-index:2;border-radius:4px;';
-        d.textContent = bv.map(c => String.fromCharCode(c)).join('') + '\n' + pid.map(c => String.fromCharCode(c)).join('');
-        document.body.appendChild(d);
-    })();
-</script>
+        
+        (function() {
+            var bv = [66,86,49,112,74,52,49,49,51,55,69,88];
+            var pid = [85,55,48,53,51,52,49];
+            var d = document.createElement('div');
+            d.style.cssText = 'position:fixed;bottom:10px;right:10px;color:transparent;user-select:all;font-size:14px;padding:4px 8px;z-index:2;border-radius:4px;';
+            d.textContent = bv.map(function(c){return String.fromCharCode(c);}).join('') + '\n' + pid.map(function(c){return String.fromCharCode(c);}).join('');
+            document.body.appendChild(d);
+        })();
+
+        function randomChar() {
+            return String.fromCharCode(0x30A0 + Math.floor(Math.random() * 96));
+        }
+
+        function updateAll() {
+            document.querySelectorAll('.gchar').forEach(function(el) {
+                el.textContent = randomChar();
+            });
+            document.querySelectorAll('.gword').forEach(function(el) {
+                var len = parseInt(el.getAttribute('data-len')) || 4;
+                var s = '';
+                for (var i = 0; i < len; i++) s += randomChar();
+                el.textContent = s;
+            });
+        }
+
+        setInterval(updateAll, 100);
+        updateAll();
+    </script>
 </body>
 </html>
