@@ -163,7 +163,7 @@
                 if (!gameOver) {
                     score += 1;
                     scoreDisplay.textContent = 'Score: ' + score;
-                    if (score % 180 === 0) gameSpeed += 0.4;
+                    if (score % 1800 === 0) gameSpeed += 0.4;
                 }
 
                 if (!musicTriggered && score >= 32627) {
