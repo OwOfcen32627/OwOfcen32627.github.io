@@ -2,204 +2,59 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Final Verification</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        body { 
+            background: white; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            font-family: monospace; 
         }
-
-        body {
-            background: #ffffff;          /* 纯白背景 */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        input { 
+            padding: 12px; 
+            font-size: 20px; 
+            text-align: center; 
+            border: 2px solid #2c6fce; 
+            border-radius: 30px; 
+            outline: none; 
         }
-
-        .password-box {
-            text-align: center;
-        }
-
-        .password-box input {
-            width: 280px;
-            padding: 14px 20px;
-            font-size: 18px;
-            text-align: center;
-            letter-spacing: 4px;
-            border: 2px solid #2c6fce;
-            border-radius: 40px;
-            background: #f7f9fc;          /* 浅灰白色输入框，保持干净 */
-            color: #1a1a1a;
-            outline: none;
-            transition: all 0.3s;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-        }
-
-        .password-box input:focus {
-            border-color: #1a529e;
-            box-shadow: 0 0 15px rgba(44, 111, 206, 0.2);
-        }
-
-        .password-box button {
-            margin-top: 20px;
-            padding: 12px 32px;
-            border: none;
-            border-radius: 40px;
-            background: #2c6fce;
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            letter-spacing: 2px;
-            transition: all 0.3s;
-        }
-
-        .password-box button:hover {
-            background: #1a529e;
-            box-shadow: 0 0 20px rgba(44, 111, 206, 0.3);
-            transform: translateY(-2px);
-        }
-
-        /* 成功弹窗（隐藏） */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-dialog {
-            background: #ffffff;
-            border: 2px solid #2c6fce;
-            border-radius: 16px;
-            padding: 30px 25px;
-            width: 90%;
-            max-width: 420px;
-            text-align: center;
-            color: #1a1a1a;
-            box-shadow: 0 0 30px rgba(44, 111, 206, 0.2);
-            animation: fadeSlide 0.3s ease;
-        }
-
-        @keyframes fadeSlide {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal-dialog h2 {
-            font-size: 24px;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-            color: #1a529e;
-        }
-
-        .modal-dialog p {
-            font-size: 16px;
-            line-height: 1.8;
-            margin: 15px 0;
-            color: #333;
-        }
-
-        .modal-dialog button {
-            padding: 10px 25px;
-            border-radius: 25px;
-            border: none;
-            background: #2c6fce;
-            color: white;
-            font-size: 14px;
-            cursor: pointer;
-            letter-spacing: 1px;
-            transition: background 0.3s;
-        }
-
-        .modal-dialog button:hover {
-            background: #1a529e;
-        }
-
-        /* 错误提示 */
-        .error-message {
-            color: #d93025;
-            font-size: 13px;
-            margin-top: 8px;
-            display: none;
+        button { 
+            margin-top: 10px; 
+            padding: 10px 30px; 
+            font-size: 18px; 
+            border: none; 
+            border-radius: 30px; 
+            background: #2c6fce; 
+            color: white; 
+            cursor: pointer; 
         }
     </style>
 </head>
 <body>
-    <div class="password-box">
-        <input type="text" id="passwordInput" placeholder="" maxlength="30" autocomplete="off">
+    <div>
+        <input type="text" id="pw" placeholder="Password" autocomplete="off">
         <br>
-        <button id="submitBtn">Verify</button>
-        <div class="error-message" id="errorMsg">Wrong Answer</div>
-    </div>
-
-    <!-- Success Modal -->
-    <div class="modal-overlay" id="successModal">
-        <div class="modal-dialog">
-            <h2>Accepted.</h2>
-            <p id="successMessage">
-                你解出来了喵<br>
-                你太牛逼了喵
-                跪了喵
-            </p>
-            <button onclick="document.getElementById('successModal').classList.remove('active')">Close</button>
-        </div>
+        <button id="btn">Verify</button>
     </div>
 
     <script>
-        // ========== SET YOUR FINAL PASSWORD HERE ==========
-        const FINAL_PASSWORD = "COGITOERGOSUM138902184";
+        const PASSWORD = "COGITOERGOSUM138902184";
+        const pw = document.getElementById('pw');
+        const btn = document.getElementById('btn');
 
-        const passwordInput = document.getElementById('passwordInput');
-        const submitBtn = document.getElementById('submitBtn');
-        const errorMsg = document.getElementById('errorMsg');
-        const successModal = document.getElementById('successModal');
-
-        submitBtn.addEventListener('click', checkPassword);
-        passwordInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') checkPassword();
-        });
-
-        function checkPassword() {
-            const input = passwordInput.value.trim().toUpperCase();
-            if (input === FINAL_PASSWORD) {
-                errorMsg.style.display = 'none';
-                successModal.classList.add('active');
-                passwordInput.value = '';
+        btn.onclick = () => {
+            if (pw.value.trim().toUpperCase() === PASSWORD) {
+                alert("Access Granted\nProject Codename: PHOENIX");
             } else {
-                errorMsg.style.display = 'block';
-                passwordInput.value = '';
-                passwordInput.focus();
+                alert("Wrong password");
+                pw.value = '';
             }
-        }
-
-        // Close modal on background click
-        document.getElementById('successModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.classList.remove('active');
-                passwordInput.focus();
-            }
+        };
+        pw.addEventListener('keydown', e => {
+            if (e.key === 'Enter') btn.click();
         });
     </script>
 </body>
