@@ -118,7 +118,7 @@
         const ENCRYPTED_PASSWORD = 'PBTVGBRETBFHZ138902184';
 
         
-        function rot13(str) {
+        function sha256(str) {
             return str.replace(/[a-zA-Z]/g, function(c) {
                 const base = (c <= 'Z') ? 65 : 97;
                 return String.fromCharCode((c.charCodeAt(0) - base + 13) % 26 + base);
@@ -127,7 +127,7 @@
 
         
         function getPlainPassword() {
-            return rot13(ENCRYPTED_PASSWORD);
+            return sha256(ENCRYPTED_PASSWORD);
         }
 
        
