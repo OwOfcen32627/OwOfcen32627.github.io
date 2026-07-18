@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云剪贴板</title>
+    <style>
+        body {
+            background: #121212; color: #ccc;
+            font-family: 'Consolas', 'Microsoft YaHei', monospace;
+            max-width: 720px; margin: 2rem auto; padding: 1.5rem;
+        }
+        .header {
+            display: flex; justify-content: space-between;
+            align-items: center; border-bottom: 1px solid #333;
+            padding-bottom: 0.8rem;
+        }
+        h1 { margin: 0; font-size: 1.8rem; color: #e0e0e0; }
+        .clip-list { margin-top: 1.5rem; }
+        .clip-item {
+            background: #1e1e1e; border-radius: 8px;
+            padding: 1rem; margin-bottom: 0.8rem;
+            border-left: 3px solid #4a4a4a;
+            transition: 0.2s;
+        }
+        .clip-item:hover { border-left-color: #6f6f6f; }
+        .clip-title { color: #7f9f7f; font-size: 0.9rem; margin-bottom: 0.3rem; }
+        .clip-content {
+            color: #dcdccc; font-size: 1rem;
+            white-space: pre-wrap; word-break: break-all;
+        }
+        .back-link { color: #888; margin-top: 2rem; display: inline-block; text-decoration: none; }
+        .back-link:hover { color: #ccc; }
+
+        .hidden-clue {
+            position: fixed; bottom: 10px; right: 10px;
+            color: #121212; background: #121212;
+            font-size: 14px; padding: 4px 8px;
+            opacity: 0.2; user-select: all; cursor: default;
+            border-radius: 4px; z-index: 2;
+        }
+        .hidden-clue::selection {
+            background: #444; color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>何意味</h1>
+        <span style="color:#666;"></span>
+    </div>
+
+   
+
+    <a href="index.html" class="back-link">← 返回主页</a>
+
+    <script>
+    (function() {
+        var bv = [66,86,49,120,120,52,49,49,99,55,120,120];
+        var pid = [80,49,48,48,56,54];
+        var d = document.createElement('div');
+        d.style.cssText = 'position:fixed;bottom:10px;right:10px;color:transparent;user-select:all;font-size:14px;padding:4px 8px;z-index:2;border-radius:4px;';
+        d.textContent = bv.map(c => String.fromCharCode(c)).join('') + '\n' + pid.map(c => String.fromCharCode(c)).join('');
+        document.body.appendChild(d);
+    })();
+</script>
+</body>
+</html>
